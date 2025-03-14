@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Trang Chủ - Quản Lý Thông Tin{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Chào mừng đến với Hệ thống Quản lý Thông tin</h1>
+        <p>Quản lý tasks và posts của bạn một cách hiệu quả</p>
+        {% if not current_user.is_authenticated %}
+            <div class="hero-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Đăng Nhập</a>
+                <a href="{{ url_for('register') }}" class="btn btn-secondary">Đăng Ký</a>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2>Tính năng chính</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Quản lý Tasks</h3>
+                <p>Tạo và theo dõi các công việc của bạn</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Quản lý Posts</h3>
+                <p>Chia sẻ thông tin và bài viết</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Quản lý User</h3>
+                <p>Phân quyền và quản lý người dùng</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %} 
