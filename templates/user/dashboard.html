@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1>Welcome, {{ current_user.username }}!</h1>
+        <div class="user-actions">
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-grid">
+        <!-- Tasks Column -->
+        <div class="dashboard-column">
+            <div class="column-header">
+                <h2>My Tasks</h2>
+                <a href="{{ url_for('create_task') }}" class="btn btn-create">+ New Task</a>
+            </div>
+            <div class="items-container">
+                {% if tasks %}
+                    {% for task in tasks %}
+                    <div class="dashboard-card {% if task.completed %}completed{% endif %}">
+                        <div class="card-header">
+                            <h3>{{ task.title }}</h3>
+                            <span class="status-badge {% if task.completed %}completed{% endif %}">
+                                {{ 'Completed' if task.completed else 'Pending' }}
+                            </span>
+                        </div>
+                        <p class="card-description">{{ task.description }}</p>
+                        {% if task.due_date %}
+                        <div class="card-date">
+                            <i class="far fa-calendar"></i>
+                            Due: {{ task.due_date.strftime('%Y-%m-%d') }}
+                        </div>
+                        {% endif %}
+                        <div class="card-actions">
+                            <a href="{{ url_for('edit_task', id=task.id) }}" class="btn btn-edit">Edit</a>
+                            <a href="{{ url_for('delete_task', id=task.id) }}" class="btn btn-delete" 
+                               onclick="return confirm('Are you sure you want to delete this task?')">Delete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>No tasks yet</p>
+                        <a href="{{ url_for('create_task') }}" class="btn btn-create">Create your first task</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Posts Column -->
+        <div class="dashboard-column">
+            <div class="column-header">
+                <h2>My Posts</h2>
+                <a href="{{ url_for('create_post') }}" class="btn btn-create">+ New Post</a>
+            </div>
+            <div class="items-container">
+                {% if posts %}
+                    {% for post in posts %}
+                    <div class="dashboard-card">
+                        <h3>{{ post.title }}</h3>
+                        {% if post.image_url %}
+                        <div class="card-image">
+                            <img src="{{ url_for('static', filename=post.image_url) }}" alt="Post image">
+                        </div>
+                        {% endif %}
+                        <p class="card-description">{{ post.content[:150] }}{% if post.content|length > 150 %}...{% endif %}</p>
+                        {% if post.link %}
+                        <div class="card-link">
+                            <a href="{{ post.link }}" target="_blank">Related Link</a>
+                        </div>
+                        {% endif %}
+                        <div class="card-date">
+                            <i class="far fa-clock"></i>
+                            Posted: {{ post.created_at.strftime('%Y-%m-%d') }}
+                        </div>
+                        <div class="card-actions">
+                            <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-edit">Edit</a>
+                            <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-delete"
+                               onclick="return confirm('Are you sure you want to delete this post?')">Delete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>No posts yet</p>
+                        <a href="{{ url_for('create_post') }}" class="btn btn-create">Create your first post</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1>Admin Dashboard</h1>
+            <p>Manage your system users</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <h3>Total Users</h3>
+                <p class="stat-number">{{ users|length }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <h3>Active Users</h3>
+                <p class="stat-number">{{ users|length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management Section -->
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>User Management</h2>
+            <div class="search-box">
+                <input type="text" id="userSearch" placeholder="Search users...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Joined Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="user-select">
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">{{ user.username[0].upper() }}</div>
+                                <span>{{ user.username }}</span>
+                            </div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="status-badge active">Active</span>
+                        </td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon edit" title="Edit User">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <a href="{{ url_for('delete_user', user_id=user.id) }}" 
+                                   class="btn-icon delete" 
+                                   title="Delete User"
+                                   onclick="return confirm('Are you sure you want to delete this user? All their tasks and posts will also be deleted.')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="btn-page" disabled>&lt; Previous</button>
+            <div class="page-numbers">
+                <button class="btn-page active">1</button>
+                <button class="btn-page">2</button>
+                <button class="btn-page">3</button>
+            </div>
+            <button class="btn-page">Next &gt;</button>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm JavaScript cho tìm kiếm user -->
+<script>
+document.getElementById('userSearch').addEventListener('keyup', function() {
+    let searchText = this.value.toLowerCase();
+    let tableRows = document.querySelectorAll('.admin-table tbody tr');
+    
+    tableRows.forEach(row => {
+        let username = row.querySelector('.user-info span').textContent.toLowerCase();
+        let email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+        
+        if (username.includes(searchText) || email.includes(searchText)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Xử lý select all checkbox
+document.getElementById('selectAll').addEventListener('change', function() {
+    let checkboxes = document.querySelectorAll('.user-select');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+</script>
+{% endblock %} 
